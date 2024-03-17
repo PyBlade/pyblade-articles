@@ -1,11 +1,10 @@
 ---
 title: Maintaining a Websocket Connection
-author: Ray
 date: 2024-03-16 14:00:00 +0000
 categories: [General]
 tags: [websockets, async, python, generators, API, Deribit]
 image:
-  path: /50b102d7-ef0c-4df4-f4df-2c35908d2c00/public
+  path: /9008ccd2-a679-42e4-99f2-d99f3fbc4800/public
 ---
 
 ## Introduction
@@ -19,6 +18,8 @@ When I first tackled this problem I would write all sorts of try except blocks, 
 This may sound too simplistic but bear with me! Now I could immediately be pretentious and say that we are going to create an _asynchronous context generator_ as if I was some stack overflow logic artisan. Sounds comlicated? It's not, it's just designed to sound like it!
 
 I'll start by breaking down the key topics that make up this design before finally brining it all together at thend. Or you can scroll to the bottom and see the final example.
+
+Full example code is available [here](https://github.com/PyBlade/pyblade-articles)
 
 ## Generators
 
@@ -65,9 +66,8 @@ while True:
     time.sleep(1)
 ```
 
-### Takeaway from Generators
-
-What a generator is and how we can use `while True` inside it to make in inexhaustible.
+> We can use `while True` inside a generator to make it inexhaustible.
+{: .prompt-tip }
 
 ## Context
 
@@ -104,9 +104,8 @@ Also note that we used the same `open` object to open the file. So is it a calla
 
 Variables that were created within the context are not lost when exiting it, a context is not it's own namespace which is subject to garbage collection when exiting the context.
 
-### Takeaway from Contexts
-
-A context generator defines how we enter and exit a block of code using the `with` and `as` keywords. Data stored in memory is not lost when we exit the context.
+>A context generator defines how we enter and exit a block of code using the `with` and `as` keywords. Data stored in memory is not lost when we exit the context.
+{: .prompt-tip }
 
 ## Async
 
@@ -143,11 +142,10 @@ RuntimeWarning: coroutine ... was never awaited
 
 Is a dead give away that you've forgotten `await` at the given line in the exception message.
 
-I'm only covering basic async topics that we need for this article. To fully learn and master can be a challenge.
+I'm only covering basic async topics that we need for this article. To fully learn and master async can be a challenge.
 
-### Takeaway from Async
-
-Going full async is hard, the basics is not.
+>Going full async is hard, the basics is not.
+{: .prompt-tip }
 
 ## Websockets
 
@@ -180,9 +178,8 @@ async def print_btc_ticker():
 asyncio.run(print_btc_ticker())
 ```
 
-### Takeaway from Websockets
-
-Conceptually entering and exiting the context provided by websockets is the same as opening and closing the file.
+>Conceptually from a context point-of-view, entering and exiting the context provided by websockets is the same as opening and closing a file.
+{: .prompt-tip }
 
 ## Maintain the Websocket Connection
 
@@ -278,6 +275,8 @@ asyncio.run(print_btc_ticker())
 
 ## Summary
 
-Instead of writing overly defensive code to maintain a websocket connection we can instead forget about the connection that failed and create a new one. Because the connection is a context, any data that was stored in memory is not lost when the websocket connection is lost and is still available to us as we yield another websocket context.
+Instead of writing overly defensive code to maintain a websocket connection we can instead forget about the connection that failed and create a new one. Because the connection is a context, any data that was stored in memory is not lost when the websocket connection is lost and is still available to us as we yield another websocket return into an identical context.
 
-I hope you found this useful, I will build on this in my next article, a custom websocket context manager.
+By using this framework you can do anything you want within the `while websocket.open` loop, record streaming data, a trading algorithm, etc. This can be made even more resiliant by running inside a Docker container with a restart policy, a topic for another article perhaps.
+
+I will build on this in my next article, a custom websocket context manager.
